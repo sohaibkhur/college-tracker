@@ -13,7 +13,12 @@ async function ensureTable() {
 export async function GET() {
   await ensureTable();
   const rows = await sql`select data from app_data where id = ${ROW_ID}`;
-  return Response.json(rows[0]?.data ?? []);
+  const saved = rows[0]?.data ?? [];
+  const applications = typeof saved === "string" ? JSON.parse(saved) : saved;
+  if (!Array.isArray(applications)) {
+    return Response.json({ error: "Stored applications are not a list" }, { status: 500 });
+  }
+  return Response.json(applications);
 }
 
 export async function PUT(request: Request) {
@@ -23,7 +28,7 @@ export async function PUT(request: Request) {
   }
   await ensureTable();
   await sql`
-    insert into app_data (id, data) values (${ROW_ID}, ${JSON.stringify(body)}::jsonb)
+    insert into app_data (id, data) values (${ROW_ID}, ${sql.json(body)})
     on conflict (id) do update set data = excluded.data
   `;
   return Response.json({ ok: true });

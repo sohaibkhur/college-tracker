@@ -7,7 +7,7 @@ import { STATUSES, type Application, type Status } from "@/lib/types";
 import { useApplications } from "@/lib/useApplications";
 
 export default function Home() {
-  const { applications, loaded, addApplication, updateApplication, deleteApplication } = useApplications();
+  const { applications, loaded, error, addApplication, updateApplication, deleteApplication } = useApplications();
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Application | null>(null);
   const [filter, setFilter] = useState<Status | "All">("All");
@@ -38,12 +38,15 @@ export default function Home() {
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            disabled={!loaded}
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
             + Add application
           </button>
         )}
       </header>
+
+      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
       {showForm && (
         <ApplicationForm key={editing?.id ?? "new"} initial={editing ?? undefined} onSave={handleSave} onCancel={closeForm} />

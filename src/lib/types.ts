@@ -9,6 +9,9 @@ export const STATUSES = [
 
 export type Status = (typeof STATUSES)[number];
 
+export const ACCEPTANCE_CHANCES = ["Safe", "Medium", "Hard"] as const;
+export type AcceptanceChance = (typeof ACCEPTANCE_CHANCES)[number];
+
 export type Requirement = {
   id: string;
   text: string;
@@ -23,6 +26,22 @@ export type Application = {
   status: Status;
   requirements: Requirement[];
   notes: string;
+  tuitionFees?: number;
+  tuitionCurrency?: string;
+  acceptanceChance?: AcceptanceChance;
+  contactName?: string;
+  contactDetails?: string;
+  recommendationRequests?: string;
+  lastContact?: string;
+  nextAction?: string;
+  decisionDate?: string;
+  admissionResult?: string;
+  offeredProgram?: string;
+  nextSteps?: string;
+  responseDeadline?: string;
+  pros?: string;
+  cons?: string;
+  questionsToAsk?: string;
 };
 
 // Starter checklist for every new application; edit freely afterwards.
