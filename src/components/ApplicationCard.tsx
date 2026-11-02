@@ -27,13 +27,13 @@ function DetailSection({ title, entries }: { title: string; entries: [string, st
   const visible = entries.filter(([, value]) => value);
   if (!visible.length) return null;
   return (
-    <details className="mt-4 border-t border-slate-200 pt-3">
-      <summary className="cursor-pointer text-sm font-semibold">{title}</summary>
-      <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+    <details className="mt-5 border-t border-slate-200 pt-4">
+      <summary className="cursor-pointer py-1 text-sm font-semibold">{title}</summary>
+      <dl className="mt-4 grid gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
         {visible.map(([label, value]) => (
           <div key={label} className="min-w-0">
             <dt className="font-medium text-slate-700">{label}</dt>
-            <dd className="whitespace-pre-wrap break-words text-slate-600">{value}</dd>
+            <dd className="mt-1 whitespace-pre-wrap break-words text-slate-600">{value}</dd>
           </div>
         ))}
       </dl>
@@ -75,12 +75,15 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
   }
 
   return (
-    <div className="min-w-0 break-words rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+    <div className="min-w-0 break-words rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0 flex-1 basis-48">
           <h3 className="text-lg font-semibold">{app.college}</h3>
           {app.program && <p className="text-sm text-slate-600">{app.program}</p>}
-          <p className={`mt-1 text-sm ${label.color}`}>Deadline: {label.text}</p>
+          {app.url && /^https?:\/\//i.test(app.url) && (
+            <a href={app.url} target="_blank" rel="noopener noreferrer" className="mt-2 block break-all text-sm text-blue-600 underline underline-offset-2 hover:text-blue-800">{app.url}</a>
+          )}
+          <p className={`mt-2 text-sm ${label.color}`}>Deadline: {label.text}</p>
         </div>
         <select
           value={app.status}
@@ -94,7 +97,7 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
       </div>
 
       {(app.tuitionFees != null || app.acceptanceChance) && (
-        <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
           {app.tuitionFees != null && (
             <div>
               <dt className="text-xs text-slate-500">Annual tuition</dt>
@@ -113,7 +116,7 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
       {app.nextAction && <p className="mt-3 whitespace-pre-wrap text-sm"><span className="font-medium">Next action: </span>{app.nextAction}</p>}
       {app.responseDeadline && <p className={`mt-2 text-sm ${daysUntil(app.responseDeadline) <= 7 ? "font-semibold text-red-600" : "text-slate-600"}`}>Response deadline: {formatDate(app.responseDeadline)}{daysUntil(app.responseDeadline) < 0 ? " (overdue)" : ""}</p>}
 
-      <div className="mt-4">
+      <div className="mt-6">
         <div className="mb-1 flex justify-between text-xs text-slate-500">
           <span>Requirements</span>
           <span>
@@ -124,9 +127,9 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
           <div className="h-full bg-blue-500" style={{ width: total ? `${(done / total) * 100}%` : "0%" }} />
         </div>
 
-        <ul className="mt-3 space-y-1">
+        <ul className="mt-3 space-y-2">
           {app.requirements.map((r) => (
-            <li key={r.id} className="group flex items-center gap-2 text-sm">
+            <li key={r.id} className="group flex items-center gap-3 py-1 text-sm">
               <input type="checkbox" checked={r.done} onChange={() => toggleRequirement(r.id)} />
               <span className={r.done ? "text-slate-400 line-through" : ""}>{r.text}</span>
               <button
@@ -140,7 +143,7 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
           ))}
         </ul>
 
-        <form onSubmit={addRequirement} className="mt-3 flex gap-2">
+        <form onSubmit={addRequirement} className="mt-4 flex gap-3">
           <input
             value={newRequirement}
             onChange={(e) => setNewRequirement(e.target.value)}
@@ -171,7 +174,7 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
 
       {app.notes && <p className="mt-4 whitespace-pre-wrap text-sm text-slate-600">{app.notes}</p>}
 
-      <div className="mt-4 flex gap-3 text-sm">
+      <div className="mt-6 flex gap-5 border-t border-slate-200 pt-4 text-sm">
         <button onClick={onEdit} className="text-blue-600 hover:underline">
           Edit
         </button>

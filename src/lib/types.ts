@@ -22,6 +22,7 @@ export type Application = {
   id: string;
   college: string;
   program: string;
+  url?: string;
   deadline: string; // YYYY-MM-DD
   status: Status;
   requirements: Requirement[];

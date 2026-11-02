@@ -10,7 +10,7 @@ type Props = {
 };
 
 const inputClass =
-  "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none";
+  "min-h-11 w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none";
 
 const detailSections = [
   {
@@ -63,6 +63,7 @@ export default function ApplicationForm({ initial, onSave, onCancel }: Props) {
       id: initial?.id ?? crypto.randomUUID(),
       college: college.trim(),
       program: program.trim(),
+      url: String(formData.get("url") ?? "").trim(),
       deadline,
       status,
       notes,
@@ -76,10 +77,10 @@ export default function ApplicationForm({ initial, onSave, onCancel }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="min-w-0 space-y-5 border-y border-slate-200 bg-white py-5">
+    <form onSubmit={handleSubmit} className="min-w-0 space-y-8 border-y border-slate-200 bg-white px-4 py-6 sm:px-6">
       <h2 className="text-lg font-semibold">{initial ? "Edit application" : "New application"}</h2>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
         <label className="block text-sm">
           <span className="mb-1 block font-medium">College</span>
           <input required className={inputClass} value={college} onChange={(e) => setCollege(e.target.value)} />
@@ -87,6 +88,10 @@ export default function ApplicationForm({ initial, onSave, onCancel }: Props) {
         <label className="block text-sm">
           <span className="mb-1 block font-medium">Program / major</span>
           <input className={inputClass} value={program} onChange={(e) => setProgram(e.target.value)} />
+        </label>
+        <label className="block min-w-0 text-sm sm:col-span-2">
+          <span className="mb-1 block font-medium">Application URL</span>
+          <input name="url" type="url" pattern="https?://.+" title="An HTTP or HTTPS website URL" defaultValue={initial?.url ?? ""} placeholder="https://" className={inputClass} />
         </label>
         <label className="block text-sm">
           <span className="mb-1 block font-medium">Deadline</span>
@@ -102,9 +107,9 @@ export default function ApplicationForm({ initial, onSave, onCancel }: Props) {
         </label>
       </div>
 
-      <fieldset className="min-w-0 border-t border-slate-200 pt-4">
+      <fieldset className="min-w-0 border-t border-slate-200 pt-5">
         <legend className="pr-2 text-sm font-semibold">Fees and chances</legend>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-x-6 gap-y-5 sm:grid-cols-3">
           <label className="block min-w-0 text-sm">
             <span className="mb-1 block font-medium">Annual tuition fees</span>
             <input name="tuitionFees" type="number" min="0" step="0.01" defaultValue={initial?.tuitionFees ?? ""} className={inputClass} />
@@ -124,9 +129,9 @@ export default function ApplicationForm({ initial, onSave, onCancel }: Props) {
       </fieldset>
 
       {detailSections.map((section) => (
-        <fieldset key={section.title} className="min-w-0 border-t border-slate-200 pt-4">
+        <fieldset key={section.title} className="min-w-0 border-t border-slate-200 pt-5">
           <legend className="pr-2 text-sm font-semibold">{section.title}</legend>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
             {section.fields.map((field) => (
               <label key={field.name} className="block min-w-0 text-sm">
                 <span className="mb-1 block font-medium">{field.label}</span>
@@ -146,7 +151,7 @@ export default function ApplicationForm({ initial, onSave, onCancel }: Props) {
         <textarea rows={2} className={inputClass} value={notes} onChange={(e) => setNotes(e.target.value)} />
       </label>
 
-      <div className="flex gap-2">
+      <div className="flex gap-3 border-t border-slate-200 pt-5">
         <button type="submit" className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
           Save
         </button>

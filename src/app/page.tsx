@@ -29,8 +29,8 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl space-y-6 px-4 py-10">
-      <header className="flex items-center justify-between">
+    <main className="mx-auto max-w-4xl space-y-8 px-4 py-8 sm:px-6 sm:py-12">
+      <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold">College Application Tracker</h1>
           <p className="text-sm text-slate-600">{applications.length} applications</p>
@@ -72,7 +72,7 @@ export default function Home() {
         </p>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {visible.map((app) => (
           <ApplicationCard
             key={app.id}
