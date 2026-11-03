@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ApplicationCard from "@/components/ApplicationCard";
 import ApplicationForm from "@/components/ApplicationForm";
 import { STATUSES, type Application, type Status } from "@/lib/types";
@@ -11,6 +11,11 @@ export default function Home() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Application | null>(null);
   const [filter, setFilter] = useState<Status | "All">("All");
+  const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showForm && editing) formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [showForm, editing]);
 
   const visible = applications
     .filter((a) => filter === "All" || a.status === filter)
@@ -49,7 +54,9 @@ export default function Home() {
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
       {showForm && (
-        <ApplicationForm key={editing?.id ?? "new"} initial={editing ?? undefined} onSave={handleSave} onCancel={closeForm} />
+        <div ref={formRef}>
+          <ApplicationForm key={editing?.id ?? "new"} initial={editing ?? undefined} onSave={handleSave} onCancel={closeForm} />
+        </div>
       )}
 
       <div className="flex flex-wrap gap-2">

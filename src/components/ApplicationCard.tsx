@@ -52,9 +52,11 @@ function deadlineLabel(app: Application) {
 
 export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Props) {
   const [newRequirement, setNewRequirement] = useState("");
+  const [editingRequirementId, setEditingRequirementId] = useState<string | null>(null);
+  const [editingRequirementText, setEditingRequirementText] = useState("");
   const done = app.requirements.filter((r) => r.done).length;
   const total = app.requirements.length;
-  const label = deadlineLabel(app);
+  const label = app.deadline ? deadlineLabel(app) : null;
 
   function toggleRequirement(id: string) {
     onChange({
@@ -64,6 +66,15 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
 
   function removeRequirement(id: string) {
     onChange({ requirements: app.requirements.filter((r) => r.id !== id) });
+  }
+
+  function saveRequirement(e: React.FormEvent) {
+    e.preventDefault();
+    const text = editingRequirementText.trim();
+    if (!editingRequirementId || !text) return;
+    onChange({ requirements: app.requirements.map((r) => r.id === editingRequirementId ? { ...r, text } : r) });
+    setEditingRequirementId(null);
+    setEditingRequirementText("");
   }
 
   function addRequirement(e: React.FormEvent) {
@@ -83,7 +94,7 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
           {app.url && /^https?:\/\//i.test(app.url) && (
             <a href={app.url} target="_blank" rel="noopener noreferrer" className="mt-2 block break-all text-sm text-blue-600 underline underline-offset-2 hover:text-blue-800">{app.url}</a>
           )}
-          <p className={`mt-2 text-sm ${label.color}`}>Deadline: {label.text}</p>
+          {label && <p className={`mt-2 text-sm ${label.color}`}>Deadline: {label.text}</p>}
         </div>
         <select
           value={app.status}
@@ -131,8 +142,37 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
           {app.requirements.map((r) => (
             <li key={r.id} className="group flex items-center gap-3 py-1 text-sm">
               <input type="checkbox" checked={r.done} onChange={() => toggleRequirement(r.id)} />
-              <span className={r.done ? "text-slate-400 line-through" : ""}>{r.text}</span>
+              {editingRequirementId === r.id ? (
+                <form onSubmit={saveRequirement} className="flex min-w-0 flex-1 items-center gap-2">
+                  <input
+                    autoFocus
+                    value={editingRequirementText}
+                    onChange={(e) => setEditingRequirementText(e.target.value)}
+                    aria-label={`Edit ${r.text}`}
+                    className="min-w-0 flex-1 rounded border border-slate-300 px-2 py-1 focus:border-blue-500 focus:outline-none"
+                  />
+                  <button type="submit" aria-label="Save requirement" className="text-blue-600 hover:text-blue-800">Save</button>
+                  <button type="button" onClick={() => setEditingRequirementId(null)} aria-label="Cancel editing" className="text-slate-500 hover:text-slate-700">Cancel</button>
+                </form>
+              ) : (
+                <>
+                  <span className={`min-w-0 flex-1 ${r.done ? "text-slate-400 line-through" : ""}`}>{r.text}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingRequirementId(r.id);
+                      setEditingRequirementText(r.text);
+                    }}
+                    aria-label={`Edit ${r.text}`}
+                    title="Edit requirement"
+                    className="text-slate-400 hover:text-blue-600"
+                  >
+                    ✎
+                  </button>
+                </>
+              )}
               <button
+                type="button"
                 onClick={() => removeRequirement(r.id)}
                 aria-label={`Remove ${r.text}`}
                 className="ml-auto text-slate-300 hover:text-red-600"

@@ -51,6 +51,6 @@ export const DEFAULT_REQUIREMENTS = [
   "Essay / personal statement",
   "Transcripts",
   "Recommendation letters",
-  "Test scores",
+  "IELTS",
   "Application fee",
 ];

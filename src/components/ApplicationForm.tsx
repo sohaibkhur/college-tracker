@@ -95,7 +95,7 @@ export default function ApplicationForm({ initial, onSave, onCancel }: Props) {
         </label>
         <label className="block text-sm">
           <span className="mb-1 block font-medium">Deadline</span>
-          <input required type="date" className={inputClass} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+          <input type="date" className={inputClass} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
         </label>
         <label className="block text-sm">
           <span className="mb-1 block font-medium">Status</span>
