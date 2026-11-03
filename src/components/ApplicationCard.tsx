@@ -167,7 +167,7 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
                     title="Edit requirement"
                     className="text-slate-400 hover:text-blue-600"
                   >
-                    ✎
+                    <span className="inline-block rotate-180">✎</span>
                   </button>
                 </>
               )}
