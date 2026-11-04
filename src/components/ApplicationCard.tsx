@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { daysUntil, formatDate } from "@/lib/dates";
+import { formatApplicationDetails } from "@/lib/applicationExport";
 import { STATUSES, type Application, type Status } from "@/lib/types";
 
 type Props = {
@@ -54,6 +55,7 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
   const [newRequirement, setNewRequirement] = useState("");
   const [editingRequirementId, setEditingRequirementId] = useState<string | null>(null);
   const [editingRequirementText, setEditingRequirementText] = useState("");
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const done = app.requirements.filter((r) => r.done).length;
   const total = app.requirements.length;
   const label = app.deadline ? deadlineLabel(app) : null;
@@ -83,6 +85,15 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
     if (!text) return;
     onChange({ requirements: [...app.requirements, { id: crypto.randomUUID(), text, done: false }] });
     setNewRequirement("");
+  }
+
+  async function copyDetails() {
+    try {
+      await navigator.clipboard.writeText(formatApplicationDetails(app));
+      setCopyState("copied");
+    } catch {
+      setCopyState("error");
+    }
   }
 
   return (
@@ -215,6 +226,9 @@ export default function ApplicationCard({ app, onChange, onEdit, onDelete }: Pro
       {app.notes && <p className="mt-4 whitespace-pre-wrap text-sm text-slate-600">{app.notes}</p>}
 
       <div className="mt-6 flex gap-5 border-t border-slate-200 pt-4 text-sm">
+        <button onClick={copyDetails} className="text-blue-600 hover:underline">
+          {copyState === "copied" ? "Copied" : copyState === "error" ? "Copy failed" : "Copy details"}
+        </button>
         <button onClick={onEdit} className="text-blue-600 hover:underline">
           Edit
         </button>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import ApplicationCard from "@/components/ApplicationCard";
 import ApplicationForm from "@/components/ApplicationForm";
+import { formatAllApplicationDetails } from "@/lib/applicationExport";
 import { STATUSES, type Application, type Status } from "@/lib/types";
 import { useApplications } from "@/lib/useApplications";
 
@@ -33,6 +34,16 @@ export default function Home() {
     setEditing(null);
   }
 
+  function exportAll() {
+    const file = new Blob([formatAllApplicationDetails(applications)], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `college-applications-${new Date().toISOString().slice(0, 10)}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <main className="mx-auto max-w-4xl space-y-8 px-4 py-8 sm:px-6 sm:py-12">
       <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -40,15 +51,24 @@ export default function Home() {
           <h1 className="text-2xl font-bold">College Application Tracker</h1>
           <p className="text-sm text-slate-600">{applications.length} applications</p>
         </div>
-        {!showForm && (
+        <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => setShowForm(true)}
-            disabled={!loaded}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            onClick={exportAll}
+            disabled={!loaded || applications.length === 0}
+            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-100 disabled:opacity-50"
           >
-            + Add application
+            Export all
           </button>
-        )}
+          {!showForm && (
+            <button
+              onClick={() => setShowForm(true)}
+              disabled={!loaded}
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              + Add application
+            </button>
+          )}
+        </div>
       </header>
 
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
